@@ -1,0 +1,54 @@
+#include<unistd.h>
+#include<termios.h>
+#include<stdio.h>
+#include<fcntl.h>
+#include<stdlib.h>
+#include<string.h>
+
+#include"sport.h"
+
+int S_port::open()
+{
+	struct termios myterio;
+	
+	if((m_Socket_fd = ::open("/dev/ttyUSB0", O_RDWR|O_SYNC)) < 0)  //O_NOCTTY|O_NONBLOCK
+	{
+        fprintf(stderr,"open port error\n");
+        return -1;
+   	}
+   	
+   	memset(&myterio, 0, sizeof(myterio));
+    myterio.c_cflag      = B9600|CS8|CLOCAL|CREAD;
+    myterio.c_iflag      = IGNPAR;
+    myterio.c_oflag      = 0;
+    myterio.c_lflag      = 0;
+    myterio.c_cc[VTIME]  = 0;
+    myterio.c_cc[VMIN]   = 0;
+    tcsetattr(m_Socket_fd, TCSANOW, &myterio);
+    
+    
+}
+
+void S_port::close()
+{
+	::close(m_Socket_fd);
+	m_Socket_fd=-1;
+}
+
+unsigned char S_port::read_byte()
+{
+	char s=0;
+	read(m_Socket_fd,&s,1);
+	return s;
+}
+
+unsigned char S_port::write_byte(unsigned char s)
+{
+//f1:
+	write(m_Socket_fd,&s,1);
+	usleep(10);
+	if(read_byte()!=s)
+		goto f1;
+	
+	return s;
+}

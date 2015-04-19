@@ -1,0 +1,11 @@
+#include"population.h"
+
+Population::Population()
+{
+	p_parent=new vector<GeneBase*>;
+	p_child=new vector<GeneBase*>;
+	//i_parent_b=p_parent->begin();
+	//i_child_b=p_child->begin();
+	//i_parent_e=p_parent->end();
+	//i_child_e=p_child->end();
+}

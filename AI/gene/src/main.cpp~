@@ -1,0 +1,2 @@
+#include"gene_bit.cpp"
+#include"population.cpp"

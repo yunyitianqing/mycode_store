@@ -1,0 +1,22 @@
+#ifndef _GENE_BASE_
+#define _GENE_BASE_
+
+class GeneBase
+{
+public:
+	///虚析构
+	virtual ~GeneBase()=0;
+	//virtual ceshi()=0;
+	///虚杂交，指针传入后，强制类型转换为派生类，再进行计算
+	virtual void breed(GeneBase*)=0;
+	///虚变异
+	virtual void change()=0;
+	///虚复制
+	virtual void copy()=0;
+	///虚生存斗争的，种群贡献度计算。
+	virtual double choice()=0;
+	///虚生成，根据rand，随机生成个体的基因。
+	virtual init(int rand)=0;
+};
+
+#endif

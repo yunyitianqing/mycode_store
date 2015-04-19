@@ -1,0 +1,1 @@
+void MySobel(IplImage* src ,IplImage* dsrc);

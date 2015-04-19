@@ -1,0 +1,9 @@
+cd blob 
+cmake . && make
+cd ..
+cd imgpro 
+cmake . && make
+cd ..
+cd test 
+cmake . && make
+cd ..

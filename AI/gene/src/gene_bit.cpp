@@ -1,0 +1,212 @@
+#include"gene_bit.h"
+
+#include<stdlib.h>
+#include<vector>
+#include<algorithm>
+
+#include<sys/time.h>
+
+GeneBit::GeneBit(unsigned int gene_byte):GeneBase()
+{
+	this->gene_byte=gene_byte;
+	for(int i=0;i<gene_byte;++i)
+		gene.push_back(0);
+}
+
+GeneBit::~GeneBit()
+{
+	this->gene.clear();
+}
+
+///虚生成基因序列，根据srand，随机生成个体的基因。
+void GeneBit::gene_rand(int seed)
+{
+	
+	srand(seed);
+	for(int i=0;i<gene_byte;++i)
+	{
+		gene[i]=(int)((unsigned int)rand()%256);
+	}
+}
+///虚变异，生成一个派生类实体。并返回指针
+GeneBase* GeneBit::change(int num)
+{
+	struct timeval mytime;
+	gettimeofday(&mytime,NULL);
+	srand(mytime.tv_sec+mytime.tv_usec);
+	
+	GeneBit*p=new GeneBit(this->gene_byte);
+	p->gene=this->gene;
+	
+	for(int i=0;i<num;++i)
+	{
+		gene[(unsigned int)rand()%gene_byte]=(unsigned int)rand()%256;
+	}
+	
+}
+
+///虚复制，生成一个派生类实体。并返回指针
+GeneBase* GeneBit::copy()
+{
+	GeneBit*p=new GeneBit(this->gene_byte);
+	p->gene=this->gene;
+	return (GeneBase*)p;
+}
+
+///虚杂交，指针传入后，强制类型转换为派生类，再进行计算
+void GeneBit::_breed(GeneBase*p1,GeneBase*p2,GeneBase*&c1,GeneBase*&c2,int flag)
+{
+	GeneBit*P1=(GeneBit*)p1;
+	GeneBit*P2=(GeneBit*)p2;
+	c1=(GeneBase*)new GeneBit(P1->gene_byte);
+	c2=(GeneBase*)new GeneBit(P2->gene_byte);
+	switch(flag)
+	{
+	case 1:
+		_breed_equal(p1,p2,c1,c2);
+		break;
+	case 2:
+		_breed_points(p1,p2,c1,c2,3);
+	}
+}
+
+
+GeneBase& GeneBit::operator=(GeneBase&old)
+{
+	GeneBit*p=(GeneBit*)&old;
+	this->gene=p->gene;
+	
+	return old;
+}
+
+///虚new，用于生成子类。
+GeneBase* GeneBit::new_opt()
+{
+	return (GeneBase*)new GeneBit(this->gene_byte);
+}
+///虚del,用于析构子类
+void GeneBit::del_opt(GeneBase*p)
+{
+	delete p;
+}
+///按位杂交函数，范围，一个字节。
+///a1=p1 a2=p2 a3=c1 a4=c2 a=是否交换的八位，
+void GeneBit::breed_bit(unsigned char&a1,unsigned char&a2,unsigned char&a3,unsigned char&a4,unsigned char&a)
+{
+	
+	for(int j=0;j<8;j++)
+	{
+		if((a>>j)%2)
+		{
+		
+			if(a2&0x01)
+			{
+				a3|=1;
+			}
+			if(a1&0x01)
+			{
+				a4|=1;
+			}
+		}
+		else
+		{
+			if(a1&0x01)
+			{
+				a3|=1;
+			}
+			if(a2&0x01)
+			{
+				a4|=1;
+			}
+		}
+		a1>>=1;
+		a2>>=1;
+		if(j!=7)
+		{
+			a3<<=1;
+			a4<<=1;
+		}
+	}
+}
+
+///均匀杂交
+void GeneBit::_breed_equal(GeneBase*p1,GeneBase*p2,GeneBase*&c1,GeneBase*&c2)
+{
+	GeneBit*P1=(GeneBit*)p1;
+	GeneBit*P2=(GeneBit*)p2;
+	GeneBit*C1=(GeneBit*)c1;
+	GeneBit*C2=(GeneBit*)c2;
+	struct timeval mytime;
+	gettimeofday(&mytime,NULL);
+	srand(mytime.tv_sec+mytime.tv_usec);
+	for(int i=0;i<gene_byte;i++)
+	{
+		unsigned char a=rand()%256;
+		unsigned char a1=P1->gene[i];
+		unsigned char a2=P2->gene[i];
+		unsigned char a3=0;
+		unsigned char a4=0;
+		///取按位杂交
+		breed_bit(a1,a2,a3,a4,a);
+		C1->gene[i]=a3;
+		C2->gene[i]=a4;
+	}
+}
+///多点杂交，num取1为单点。
+void GeneBit::_breed_points(GeneBase*p1,GeneBase*p2,GeneBase*&c1,GeneBase*&c2,int num)
+{
+	GeneBit*P1=(GeneBit*)p1;
+	GeneBit*P2=(GeneBit*)p2;
+	GeneBit*C1=(GeneBit*)c1;
+	GeneBit*C2=(GeneBit*)c2;
+	struct timeval mytime;
+	gettimeofday(&mytime,NULL);
+	srand(mytime.tv_sec+mytime.tv_usec);
+	vector<int> a;//用于存储，排序的基因断点。
+	for(int i=0;i<num;i++)
+	{
+		a.push_back(rand()%P1->gene_byte);
+	}
+	sort(a.begin(),a.end());
+	for(int i=0;i<P1->gene_byte;i++)
+	{
+		int j=0;
+		for(;j<a.size();j++)
+		{
+			if(i<a[j])
+				break;
+		}
+		if(j%2==0)
+		{
+			C1->gene[i]=P1->gene[i];
+			C2->gene[i]=P2->gene[i];
+		}
+		else
+		{
+			C1->gene[i]=P2->gene[i];
+			C2->gene[i]=P1->gene[i];
+		}
+	}
+}
+
+double GeneBit::choice()
+{
+	return _choice_find_max();
+}
+
+double GeneBit::_choice_find_max()
+{
+	int a=0;
+	for(int i=0;i<gene_byte;i++)
+	{
+		char c=gene[i];
+		for(int j=0;j<8;j++)
+		{
+			if(c&0x01)
+				++a;
+			c>>=1;
+		}
+	}
+	return a;
+}
+

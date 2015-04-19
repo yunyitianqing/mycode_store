@@ -1,0 +1,23 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
+#set dir
+SET(PROJECT_ROOT_PATH ${PROJECT_SOURCE_DIR}/../)
+set(source_dir ${PROJECT_ROOT_PATH}/src)
+set(head_dir ${PROJECT_ROOT_PATH}/include)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_ROOT_PATH}/build)
+SET(PROJECT_LIBRARY_PATH ${PROJECT_ROOT_PATH}/build)
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_ROOT_PATH}/build)
+INCLUDE_DIRECTORIES(${head_dir})
+
+#set file
+
+set(source ${source_dir}/imgpro.cpp ${source_dir}/findcolor.cpp)
+
+INCLUDE_DIRECTORIES(${head_dir})
+
+
+FIND_PACKAGE(OpenCV REQUIRED)
+
+ADD_LIBRARY(imgpro_cmake SHARED ${source})
+TARGET_LINK_LIBRARIES(imgpro_cmake ${OpenCV_LIBS})
+
+

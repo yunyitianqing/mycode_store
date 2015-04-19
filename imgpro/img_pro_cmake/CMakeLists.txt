@@ -1,0 +1,18 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4 FATAL_ERROR)
+set(root ${CMAKE_SOURCE_DIR})
+set(source_dir ${root}/src)
+set(head_dir ${root}/include)
+
+set(source ${source_dir}/main.cpp)
+
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${root})
+SET(PROJECT_LIBRARY_PATH ${root}/build)
+
+SET(EXECUTABLE_OUTPUT_PATH ${root}) 
+FIND_PACKAGE(OpenCV REQUIRED)
+FIND_LIBRARY(IMGPRO_CMAKE imgpro_cmake ${PROJECT_LIBRARY_PATH})
+INCLUDE_DIRECTORIES(${root}/include)
+
+ADD_EXECUTABLE(main ${source})
+
+target_link_libraries(main ${IMGPRO_CMAKE} ${OpenCV_LIBS})     

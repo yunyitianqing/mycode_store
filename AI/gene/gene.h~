@@ -1,0 +1,20 @@
+#ifndef _GENE_
+#define _GENE_
+#include"population.h"
+#include<vector>
+class GeneBase
+{
+
+public:
+	virtual GeneBase(){};
+	///物尽天择
+	virtual choice()=0;
+	///繁殖
+	virtual breed()=0;
+	///变异
+	virtual change()=0;
+	
+	
+};
+
+#endif//_GENE_

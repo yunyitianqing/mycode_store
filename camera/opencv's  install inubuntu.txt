@@ -1,0 +1,87 @@
+
+ubuntu12.04安装openCV2.4.2
+(2012-08-08 16:54:06)
+转载▼
+标签：
+ubuntu
+opencv
+it
+	
+参考Installing OpenCV 2.4.1 in Ubuntu 12.04 LTS
+http://www.samontab.com/web/2012/06/installing-opencv-2-4-1-ubuntu-12-04-lts/
+
+更新软件列表，升级
+sudo apt-get update
+sudo apt-get upgrade
+
+安装依赖包
+sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff4-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen2-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev libqt4-dev libqt4-opengl-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev
+
+下载opencv安装包
+cd ~
+因为sourceforge被伟大的墙挡住了，所以原文中的网址打不开
+wget http://downloads.sourceforge.net/project/opencvlibrary/opencv-unix/2.4.1/OpenCV-2.4.1.tar.bz2
+好在有备份的ftp，换成以下地址(参考http://lgn21st.iteye.com/blog/212204 关于如何解决上SourceForge.net的办法)：
+wget ftp://sourceforge.nchc.org.tw/o/op/opencvlibrary/opencv-unix/2.4.2/OpenCV-2.4.2.tar.bz2
+
+解压
+tar -xvf OpenCV-2.4.2.tar.bz2
+cd OpenCV-2.4.2
+
+创建编译目录
+mkdir build
+cd build
+
+cmake生成make文件
+cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON ..
+检查输出：不能有error；FFMPEG ： YES；Python, TBB, OpenGL, V4L, OpenGL and Qt are detected。如果有问题要重新安装对应的包再cmake
+
+编译（需要很长时间）
+make
+
+安装
+sudo make install
+
+配置
+sudo gedit /etc/ld.so.conf.d/opencv.conf
+打开一个空文件，添加以下一行内容
+/usr/local/lib
+保存推出
+
+执行配置
+sudo ldconfig
+
+环境变量
+sudo gedit /etc/bash.bashrc
+
+添加以下两行并保存
+PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
+export PKG_CONFIG_PATH
+
+注销或重启
+
+测试：
+编译例程
+cd ~/OpenCV-2.4.1/samples/c
+chmod +x build_all.sh
+./build_all.sh
+
+执行程序，如果正常的话应该在lena的脸上画一个蓝色的圈
+./facedetect --cascade="/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml" --scale=1.5 lena.jpg
+
+
+
+
+
+
+
+
+编译
+`pkg-config  opencv --libs  --cflags`
+图片opencv-2.4.2  samples  c
+
+
+
+
+注意添加两行时要添加到最后  并与原文的最后几行相隔好几行  以示区别
+

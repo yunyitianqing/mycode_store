@@ -1,0 +1,9 @@
+SOURCE = connect/client.cpp demo/main.cpp
+
+INCLUDEDIR = -I./connect
+
+TARGET = demo
+
+all:
+	g++ -o ${TARGET} ${SOURCE} ${INCLUDEDIR}
+	

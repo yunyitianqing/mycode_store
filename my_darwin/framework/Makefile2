@@ -1,0 +1,20 @@
+OBJS= build/CM730.o \
+		build/LinuxCM730.o \
+		build/MX28.o
+		
+SOURCE=	src/CM730.cpp \
+		src/LinuxCM730.cpp \
+		src/MX28.cpp
+		
+INCLUDEDIR= -I./include
+
+TARGET = libframework.so
+
+all: ${TARGET}
+
+${TARGET}:${SOURCE}
+	g++ -c ${SOURCE} ${INCLUDEDIR} -lpthread -o 
+	g++ -shared ${OBJS} -o ../lib/${TARGET}
+clean:
+	rm ./build/*.o
+	rm ./lib/${TARGET}

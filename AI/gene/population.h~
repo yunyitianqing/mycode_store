@@ -1,0 +1,37 @@
+#ifndef _POPULATION_
+#define _POPULATION_
+
+#include<vector>
+#include"gene_base.h"
+class Population
+{
+private:
+	///杂交
+	void population_breed();
+	///变异
+	void population_change(;
+	///复制
+	void population_copy();
+	///选择，生存竞争。
+	void population_choice();
+	
+public:
+	Population();
+	~Population();
+	///处理
+	void process(double breed_p,double change_p);
+	///初始化种群
+	void population_init();
+	
+protected:
+	///个体
+	vector<GeneBase*>*p_parent;
+	vector<GeneBase*>*p_child;
+	auto i_parent_b;
+	auto i_child_b;
+	//auto i_parent_e;
+	//auto i_child_e;
+	
+};
+
+#endif//_POPULATION_
