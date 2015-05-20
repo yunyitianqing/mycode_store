@@ -7,9 +7,11 @@ using namespace std;
 class NerveBase
 {
 protected:
+	///累计求和时的累加变量。
 	double value_temp;
+	///最后的输出变量
 	double value_output;
-	double b;
+	
 	///名字
 	string name;
 	///神经元所在层数
@@ -22,7 +24,8 @@ public:
 	virtual ~NerveBase();
 
 	void input(double x ,double w);
-	void change_B(double b);
+	
+	void clear(){value_temp=0;};
 	virtual void caculate_output()=0;
 };
 
